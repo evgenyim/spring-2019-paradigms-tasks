@@ -18,7 +18,7 @@ class Scope:
         self.dict[key] = value
 
 
-class ASTVisitor(metaclass=abc.ABCMeta):
+class ASTNodeVisitor(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def visit_number(self, number):
         pass

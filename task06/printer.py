@@ -9,7 +9,7 @@ def pretty_print(program):
     print(printer.result(program))
 
 
-class PrettyPrint(ASTVisitor):
+class PrettyPrint(ASTNodeVisitor):
 
     def __init__(self):
         self.indent_amount = 0
