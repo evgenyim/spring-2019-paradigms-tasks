@@ -18,6 +18,48 @@ class Scope:
         self.dict[key] = value
 
 
+class ASTVisitor(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def visit_number(self, number):
+        pass
+
+    @abc.abstractmethod
+    def visit_function(self, function):
+        pass
+
+    @abc.abstractmethod
+    def visit_function_definition(self, func_def):
+        pass
+
+    @abc.abstractmethod
+    def visit_conditional(self, conditional):
+        pass
+
+    @abc.abstractmethod
+    def visit_print(self, print_):
+        pass
+
+    @abc.abstractmethod
+    def visit_read(self, read):
+        pass
+
+    @abc.abstractmethod
+    def visit_function_call(self, func_call):
+        pass
+
+    @abc.abstractmethod
+    def visit_reference(self, reference):
+        pass
+
+    @abc.abstractmethod
+    def visit_bin_operation(self, bin_op):
+        pass
+
+    @abc.abstractmethod
+    def visit_un_operation(self, un_op):
+        pass
+
+
 class ASTNode(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def evaluate(self, scope):
