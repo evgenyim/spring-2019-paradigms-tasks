@@ -1,4 +1,4 @@
-#!/usr/bin/env   python3
+#!/usr/bin/env python3
 from model import *
 
 
@@ -15,9 +15,7 @@ class ConstantFolder(ASTNodeVisitor):
         return Number(number.value)
 
     def visit_function(self, function):
-        body = []
-        for expr in function.body:
-            body.append(expr.accept(self))
+        body = [expr.accept(self) for expr in function.body or []]
         return Function(function.args, body)
 
     def visit_function_definition(self, func_def):
@@ -26,12 +24,8 @@ class ConstantFolder(ASTNodeVisitor):
 
     def visit_conditional(self, conditional):
         condition = conditional.condition.accept(self)
-        if_true = []
-        if_false = []
-        for expr in conditional.if_true:
-            if_true.append(expr.accept(self))
-        for expr in conditional.if_false:
-            if_false.append(expr.accept(self))
+        if_true = [expr.accept(self) for expr in conditional.if_true or []]
+        if_false = [expr.accept(self) for expr in conditional.if_false or []]
         return Conditional(condition, if_true, if_false)
 
     def visit_print(self, print):
@@ -42,21 +36,19 @@ class ConstantFolder(ASTNodeVisitor):
 
     def visit_function_call(self, func_call):
         function = func_call.fun_expr.accept(self)
-        args = []
-        for expr in func_call.args:
-            args.append(expr.accept(self))
+        args = [expr.accept(self) for expr in func_call.args]
         return FunctionCall(function, args)
 
     def visit_reference(self, reference):
         return Reference(reference.name)
 
-    def visit_bin_operation(self, bin_op):
+    def visit_binary_operation(self, bin_op):
         lhs = bin_op.lhs.accept(self)
         rhs = bin_op.rhs.accept(self)
         op = bin_op.op
+        scope = Scope()
         if isinstance(lhs, Number) and isinstance(rhs, Number):
-            return BinaryOperation(lhs, op, rhs).evaluate(None)
-        # if isinstance(lhs, Number)
+            return BinaryOperation(lhs, op, rhs).evaluate(scope)
         if isinstance(lhs, Number) and lhs == Number(0) and op == '*' or \
            isinstance(rhs, Number) and rhs == Number(0) and op == '*':
             return Number(0)
@@ -66,7 +58,11 @@ class ConstantFolder(ASTNodeVisitor):
                 return Number(0)
         return BinaryOperation(lhs, op, rhs)
 
-    def visit_un_operation(self, un_op):
+    def visit_unary_operation(self, un_op):
         expr = un_op.expr.accept(self)
         op = un_op.op
-        return UnaryOperation(op, expr).evaluate(None)
+        scope = Scope()
+        ret = UnaryOperation(op, expr)
+        if isinstance(expr, Number):
+            ret = ret.evaluate(scope)
+        return ret
