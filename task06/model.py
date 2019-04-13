@@ -1,4 +1,4 @@
-#!/usr/bin/env   python3
+#!/usr/bin/env python3
 import abc
 
 
@@ -52,11 +52,11 @@ class ASTNodeVisitor(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def visit_bin_operation(self, bin_op):
+    def visit_binary_operation(self, bin_op):
         pass
 
     @abc.abstractmethod
-    def visit_un_operation(self, un_op):
+    def visit_unary_operation(self, un_op):
         pass
 
 
@@ -121,7 +121,7 @@ class Function(ASTNode):
 
 class FunctionDefinition(ASTNode):
     """
-    Представляет cj,jq определение функции, т. е. связывает некоторое
+    Представляет собой определение функции, т. е. связывает некоторое
     имя с объектом типа Function.
     Результатом вычисления FunctionDefinition является побочный эффект -
     обновление текущего Scope,  т.е. в него добавляется новое значение типа
@@ -314,7 +314,7 @@ class BinaryOperation(ASTNode):
         return self.OPERATORS[op](num1, num2)
 
     def accept(self, visitor):
-        return visitor.visit_bin_operation(self)
+        return visitor.visit_binary_operation(self)
 
 
 class UnaryOperation(ASTNode):
@@ -342,4 +342,4 @@ class UnaryOperation(ASTNode):
         return self.OPERATORS[op](num)
 
     def accept(self, visitor):
-        return visitor.visit_un_operation(self)
+        return visitor.visit_unary_operation(self)
