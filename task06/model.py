@@ -116,7 +116,7 @@ class Function(ASTNode):
         return self
 
     def accept(self, visitor):
-        pass
+        return visitor.visit_function(self)
 
 
 class FunctionDefinition(ASTNode):
