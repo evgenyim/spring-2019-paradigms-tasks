@@ -32,7 +32,7 @@ class PrettyPrint(ASTNodeVisitor):
         return TypeError
 
     def visit_function_definition(self, func_def):
-        res = self.indent() + 'def ' + func_def.name + '('
+        res = 'def ' + func_def.name + '('
         res += ', '.join(func_def.function.args)
         res += ') {\n'
         self.indentation_level += 1
