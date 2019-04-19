@@ -3,12 +3,11 @@ from model import *
 
 
 def fold_constants(program):
-    const_folder = ConstantFolder()
-    return const_folder.fold(program)
+    return ConstantFolder().visit(program)
 
 
 class ConstantFolder(ASTNodeVisitor):
-    def fold(self, program):
+    def visit(self, program):
         return program.accept(self)
 
     def visit_number(self, number):
