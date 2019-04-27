@@ -170,16 +170,15 @@ fn find_solution(f: &mut Field) -> Option<Field> {
     try_extend_field(f, |f_solved| f_solved.clone(), find_solution)
 }
 
+static SPAWN_DEPTH: i32 = 2;
 /// Перебирает все возможные решения головоломки, заданной параметром `f`, в несколько потоков.
 /// Если хотя бы одно решение `s` существует, возвращает `Some(s)`,
 /// в противном случае возвращает `None`.
-
-static SPAWN_DEPTH: i32 = 2;
 fn find_solution_parallel(mut f: Field) -> Option<Field> {
     let threads_num = 8;
     let pool = ThreadPool::new(threads_num);
     let (sender, receiver) = channel();
-    spawn_tasks(&mut f, &pool, &sender, 1);
+    spawn_tasks(&mut f, &pool, &sender, 0);
     std::mem::drop(sender);
     receiver.into_iter().find_map(|s| s)
 }
