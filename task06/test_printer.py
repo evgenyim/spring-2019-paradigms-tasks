@@ -10,7 +10,9 @@ def test_conditional():
 
 
 def test_function_definition():
-    check = PrettyPrint().visit_function_definition(FunctionDefinition("foo", Function([], [])))
+    check = PrettyPrint().visit_function_definition(
+        FunctionDefinition("foo", Function([], []))
+    )
     assert check == 'def foo() {\n}'
 
 
@@ -42,13 +44,15 @@ def test_bin_operation():
 
 
 def test_un_operation():
-    check = PrettyPrint().visit_unary_operation(UnaryOperation('-', Number(42)))
+    check = PrettyPrint().visit_unary_operation(
+        UnaryOperation('-', Number(42))
+    )
     assert check == '-(42)'
 
 
 def test_function_call():
-    check = PrettyPrint().visit_function_call(FunctionCall(Reference('foo'),
-                                        [Number(1), Number(2), Number(3)]))
+    check = PrettyPrint().visit_function_call(FunctionCall(
+        Reference('foo'), [Number(1), Number(2), Number(3)]))
     assert check == 'foo(1, 2, 3)'
 
 
