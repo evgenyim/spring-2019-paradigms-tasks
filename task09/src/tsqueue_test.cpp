@@ -44,10 +44,10 @@ TEST_CASE("ThreadsafeQueue multithreaded ping-pong") {
         ThreadsafeQueue *qs = static_cast<ThreadsafeQueue *>(_qs);
         int cnt = 0;
         for (int i = 0; i < PING_PONGS; i++) {
-            int check_cnt = cnt + 1;
+            int expected_cnt = cnt + 1;
             threadsafe_queue_push(&qs[0], &cnt);
             CHECK(threadsafe_queue_wait_and_pop(&qs[1]) == &cnt);
-            CHECK(cnt == check_cnt);
+            CHECK(cnt == expected_cnt);
         }
         return nullptr;
     };
@@ -55,10 +55,10 @@ TEST_CASE("ThreadsafeQueue multithreaded ping-pong") {
     auto ponger = [](void *_qs) -> void * {
         ThreadsafeQueue *qs = static_cast<ThreadsafeQueue *>(_qs);
         for (int i = 0; i < PING_PONGS; i++) {
-            int *rec_cnt =
+            int *recieved_cnt =
                 static_cast<int *>(threadsafe_queue_wait_and_pop(&qs[0]));
-            *rec_cnt += 1;
-            threadsafe_queue_push(&qs[1], rec_cnt);
+            *recieved_cnt += 1;
+            threadsafe_queue_push(&qs[1], recieved_cnt);
         }
         return nullptr;
     };
@@ -66,8 +66,8 @@ TEST_CASE("ThreadsafeQueue multithreaded ping-pong") {
     pthread_t t1, t2;
     REQUIRE(pthread_create(&t1, nullptr, pinger, qs) == 0);
     REQUIRE(pthread_create(&t2, nullptr, ponger, qs) == 0);
-    REQUIRE(pthread_join(t1, nullptr) == 0);
     REQUIRE(pthread_join(t2, nullptr) == 0);
+    REQUIRE(pthread_join(t1, nullptr) == 0);
 
     threadsafe_queue_destroy(&qs[1]);
     threadsafe_queue_destroy(&qs[0]);
