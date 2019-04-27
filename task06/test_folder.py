@@ -41,8 +41,8 @@ def test_un_num():
     assert actual == Number(0)
 
 
-def test_all(capsys):
-    pretty_print(fold_constants(
+def test_all():
+    actual = fold_constants(
         BinaryOperation(
             Number(10),
             '-',
@@ -59,8 +59,8 @@ def test_all(capsys):
                 )
             )
         )
-    ))
-    assert capsys.readouterr().out == '13;\n'
+    )
+    assert actual == Number(13)
 
 
 if __name__ == "__main__":
