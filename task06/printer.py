@@ -25,21 +25,21 @@ class PrettyPrint(ASTNodeVisitor):
         res = 'def ' + func.name + '('
         res += ', '.join(func.function.args)
         res += ') {\n'
+        self.indentation_level += 1
+        for expr in func.function.body:
+            res += self.indent() + self.get_command(expr)
+            res += '\n'
+        self.indentation_level -= 1
         return res
 
     def visit_number(self, number):
         return str(number.value)
 
     def visit_function(self, function):
-        raise TypeError("PrettyPrint shouldn't visit function")
+        raise TypeError("PrettyPrint shouldn't visit Function")
 
     def visit_function_definition(self, func_def):
         res = self.add_definition(func_def)
-        self.indentation_level += 1
-        for expr in func_def.function.body:
-            res += self.indent() + self.get_command(expr)
-            res += '\n'
-        self.indentation_level -= 1
         res += self.indent() + '}'
         return res
 

@@ -1,63 +1,55 @@
 #!/usr/bin/env python3
 import pytest
 from printer import *
+import textwrap
 
 
 def test_conditional():
-    printer = PrettyPrint()
-    check = printer.get_command(Conditional(Number(42), [], []))
+    check = PrettyPrint().visit_conditional(Conditional(Number(42), [], []))
     assert check == 'if (42) {\n}'
 
 
 def test_function_definition():
-    printer = PrettyPrint()
-    check = printer.get_command(FunctionDefinition("foo", Function([], [])))
+    check = PrettyPrint().visit_function_definition(FunctionDefinition("foo", Function([], [])))
     assert check == 'def foo() {\n}'
 
 
 def test_print():
-    printer = PrettyPrint()
-    check = printer.get_command(Print(Number(42)))
-    assert check == 'print 42;'
+    check = PrettyPrint().visit_print(Print(Number(42)))
+    assert check == 'print 42'
 
 
 def test_read():
-    printer = PrettyPrint()
-    check = printer.get_command(Read('x'))
-    assert check == 'read x;'
+    check = PrettyPrint().visit_read(Read('x'))
+    assert check == 'read x'
 
 
 def test_number():
-    printer = PrettyPrint()
-    check = printer.get_command(Number(10))
-    assert check == '10;'
+    check = PrettyPrint().visit_number(Number(10))
+    assert check == '10'
 
 
 def test_reference():
-    printer = PrettyPrint()
-    check = printer.get_command(Reference('x'))
-    assert check == 'x;'
+    check = PrettyPrint().visit_reference(Reference('x'))
+    assert check == 'x'
 
 
 def test_bin_operation():
-    printer = PrettyPrint()
     add = BinaryOperation(Number(2), '+', Number(3))
     mul = BinaryOperation(Number(1), '*', add)
-    check = printer.get_command(mul)
-    assert check == '(1) * ((2) + (3));'
+    check = PrettyPrint().visit_binary_operation(mul)
+    assert check == '(1) * ((2) + (3))'
 
 
 def test_un_operation():
-    printer = PrettyPrint()
-    check = printer.get_command(UnaryOperation('-', Number(42)))
-    assert check == '-(42);'
+    check = PrettyPrint().visit_unary_operation(UnaryOperation('-', Number(42)))
+    assert check == '-(42)'
 
 
 def test_function_call():
-    printer = PrettyPrint()
-    check = printer.get_command(FunctionCall(Reference('foo'),
-                                [Number(1), Number(2), Number(3)]))
-    assert check == 'foo(1, 2, 3);'
+    check = PrettyPrint().visit_function_call(FunctionCall(Reference('foo'),
+                                        [Number(1), Number(2), Number(3)]))
+    assert check == 'foo(1, 2, 3)'
 
 
 def test_all(capsys):
@@ -76,17 +68,21 @@ def test_all(capsys):
             ],
         ),
     ])))
-    assert capsys.readouterr().out == 'def main(arg1) {\n' + \
-                                      '    read x;\n' + \
-                                      '    print x;\n' + \
-                                      '    if ((2) == (3)) {\n' + \
-                                      '        if (1) {\n' + \
-                                      '        }\n' + \
-                                      '    } else {\n' + \
-                                      '        exit(-(arg1));\n' + \
-                                      '    }\n' + \
-                                      '}\n'
+    expected = '''\
+        def main(arg1) {
+            read x;
+            print x;
+            if ((2) == (3)) {
+                if (1) {
+                }
+            } else {
+                exit(-(arg1));
+            }
+        }
+    '''
+
+    assert capsys.readouterr().out == textwrap.dedent(expected)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pytest.main()
