@@ -3,43 +3,41 @@ from model import *
 
 
 def pretty_print(program):
-    printer = PrettyPrint()
-    print(printer.get_result(program))
+    print(PrettyPrint().get_command(program))
 
 
 class PrettyPrint(ASTNodeVisitor):
+    INDENT = 4
 
     def __init__(self):
         self.indentation_level = 0
-        self.INDENT = 4
 
     def indent(self):
-        if self.indentation_level:
-            return (self.INDENT * self.indentation_level) * ' '
-        else:
-            return ''
+        return (PrettyPrint.INDENT * self.indentation_level) * ' '
 
-    def get_result(self, program):
+    def get_command(self, program):
         ret = program.accept(self)
         if not ret.endswith('}'):
             ret += ';'
         return ret
 
+    def add_definition(self, func):
+        res = 'def ' + func.name + '('
+        res += ', '.join(func.function.args)
+        res += ') {\n'
+        return res
+
     def visit_number(self, number):
         return str(number.value)
 
     def visit_function(self, function):
-        return TypeError
+        raise TypeError("PrettyPrint shouldn't visit function")
 
     def visit_function_definition(self, func_def):
-        res = 'def ' + func_def.name + '('
-        res += ', '.join(func_def.function.args)
-        res += ') {\n'
+        res = self.add_definition(func_def)
         self.indentation_level += 1
         for expr in func_def.function.body:
-            res += self.indent() + expr.accept(self)
-            if not res.endswith('}'):
-                res += ';'
+            res += self.indent() + self.get_command(expr)
             res += '\n'
         self.indentation_level -= 1
         res += self.indent() + '}'
@@ -49,9 +47,7 @@ class PrettyPrint(ASTNodeVisitor):
         res = 'if (' + conditional.condition.accept(self) + ') {\n'
         self.indentation_level += 1
         for expr in conditional.if_true or []:
-            res += self.indent() + expr.accept(self)
-            if not res.endswith('}'):
-                res += ';'
+            res += self.indent() + self.get_command(expr)
             res += '\n'
         self.indentation_level -= 1
         if not conditional.if_false:
@@ -60,9 +56,7 @@ class PrettyPrint(ASTNodeVisitor):
         res += self.indent() + '} else {\n'
         self.indentation_level += 1
         for expr in conditional.if_false or []:
-            res += self.indent() + expr.accept(self)
-            if not res.endswith('}'):
-                res += ';'
+            res += self.indent() + self.get_command(expr)
             res += '\n'
         self.indentation_level -= 1
         res += self.indent() + '}'

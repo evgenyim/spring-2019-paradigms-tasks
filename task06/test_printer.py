@@ -5,37 +5,37 @@ from printer import *
 
 def test_conditional():
     printer = PrettyPrint()
-    check = printer.get_result(Conditional(Number(42), [], []))
+    check = printer.get_command(Conditional(Number(42), [], []))
     assert check == 'if (42) {\n}'
 
 
 def test_function_definition():
     printer = PrettyPrint()
-    check = printer.get_result(FunctionDefinition("foo", Function([], [])))
+    check = printer.get_command(FunctionDefinition("foo", Function([], [])))
     assert check == 'def foo() {\n}'
 
 
 def test_print():
     printer = PrettyPrint()
-    check = printer.get_result(Print(Number(42)))
+    check = printer.get_command(Print(Number(42)))
     assert check == 'print 42;'
 
 
 def test_read():
     printer = PrettyPrint()
-    check = printer.get_result(Read('x'))
+    check = printer.get_command(Read('x'))
     assert check == 'read x;'
 
 
 def test_number():
     printer = PrettyPrint()
-    check = printer.get_result(Number(10))
+    check = printer.get_command(Number(10))
     assert check == '10;'
 
 
 def test_reference():
     printer = PrettyPrint()
-    check = printer.get_result(Reference('x'))
+    check = printer.get_command(Reference('x'))
     assert check == 'x;'
 
 
@@ -43,20 +43,20 @@ def test_bin_operation():
     printer = PrettyPrint()
     add = BinaryOperation(Number(2), '+', Number(3))
     mul = BinaryOperation(Number(1), '*', add)
-    check = printer.get_result(mul)
+    check = printer.get_command(mul)
     assert check == '(1) * ((2) + (3));'
 
 
 def test_un_operation():
     printer = PrettyPrint()
-    check = printer.get_result(UnaryOperation('-', Number(42)))
+    check = printer.get_command(UnaryOperation('-', Number(42)))
     assert check == '-(42);'
 
 
 def test_function_call():
     printer = PrettyPrint()
-    check = printer.get_result(FunctionCall(Reference('foo'),
-                               [Number(1), Number(2), Number(3)]))
+    check = printer.get_command(FunctionCall(Reference('foo'),
+                                [Number(1), Number(2), Number(3)]))
     assert check == 'foo(1, 2, 3);'
 
 
