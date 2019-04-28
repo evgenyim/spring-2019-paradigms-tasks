@@ -16,7 +16,7 @@ class ConstantFolder(ASTNodeVisitor):
     def visit_function(self, function):
         return Function(
             function.args.copy(),
-            [expr.accept(self) for expr in function.body or []]
+            [stmt.accept(self) for stmt in function.body]
         )
 
     def visit_function_definition(self, func_def):
@@ -28,8 +28,8 @@ class ConstantFolder(ASTNodeVisitor):
     def visit_conditional(self, conditional):
         return Conditional(
             conditional.condition.accept(self),
-            [expr.accept(self) for expr in conditional.if_true or []],
-            [expr.accept(self) for expr in conditional.if_false or []]
+            [stmt.accept(self) for stmt in conditional.if_true or []],
+            [stmt.accept(self) for stmt in conditional.if_false or []]
         )
 
     def visit_print(self, print):
@@ -41,7 +41,7 @@ class ConstantFolder(ASTNodeVisitor):
     def visit_function_call(self, func_call):
         return FunctionCall(
             func_call.fun_expr.accept(self),
-            [expr.accept(self) for expr in func_call.args or []]
+            [stmt.accept(self) for stmt in func_call.args or []]
         )
 
     def visit_reference(self, reference):
@@ -53,10 +53,10 @@ class ConstantFolder(ASTNodeVisitor):
         op = bin_op.op
         if isinstance(lhs, Number) and isinstance(rhs, Number):
             return BinaryOperation(lhs, op, rhs).evaluate(Scope())
-        if (isinstance(lhs, Number) and lhs == Number(0) and op == '*' and
-                isinstance(rhs, Reference)) or \
+        if ((isinstance(lhs, Number) and lhs == Number(0) and op == '*' and
+                isinstance(rhs, Reference)) or
             (isinstance(rhs, Number) and rhs == Number(0) and op == '*' and
-                isinstance(lhs, Reference)):
+                isinstance(lhs, Reference))):
             return Number(0)
         if isinstance(lhs, Reference) and \
            isinstance(rhs, Reference) and op == '-':

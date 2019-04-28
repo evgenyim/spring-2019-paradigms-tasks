@@ -5,13 +5,13 @@ import textwrap
 
 
 def test_conditional():
-    check = PrettyPrint().visit_conditional(Conditional(Number(42), [], []))
+    check = Conditional(Number(42), [], []).accept(PrettyPrint())
     assert check == 'if (42) {\n}'
 
 
 def test_function_definition():
     check = PrettyPrint().visit_function_definition(
-        FunctionDefinition("foo", Function([], []))
+        FunctionDefinition('foo', Function([], []))
     )
     assert check == 'def foo() {\n}'
 
@@ -72,7 +72,7 @@ def test_all(capsys):
             ],
         ),
     ])))
-    expected = '''\
+    expected = textwrap.dedent('''\
         def main(arg1) {
             read x;
             print x;
@@ -83,9 +83,9 @@ def test_all(capsys):
                 exit(-(arg1));
             }
         }
-    '''
+    ''')
 
-    assert capsys.readouterr().out == textwrap.dedent(expected)
+    assert capsys.readouterr().out == expected
 
 
 if __name__ == '__main__':

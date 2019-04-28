@@ -21,12 +21,10 @@ class PrettyPrint(ASTNodeVisitor):
             ret += ';'
         return ret
 
-    def add_definition(self, func):
-        res = 'def ' + func.name + '('
-        res += ', '.join(func.function.args)
-        res += ') {\n'
+    def visit_block(self, args):
+        res = ''
         self.indentation_level += 1
-        for expr in func.function.body:
+        for expr in args:
             res += self.indent() + self.get_command(expr)
             res += '\n'
         self.indentation_level -= 1
@@ -39,26 +37,21 @@ class PrettyPrint(ASTNodeVisitor):
         raise TypeError("PrettyPrint shouldn't visit Function")
 
     def visit_function_definition(self, func_def):
-        res = self.add_definition(func_def)
+        res = 'def ' + func_def.name + '('
+        res += ', '.join(func_def.function.args)
+        res += ') {\n'
+        res += self.visit_block(func_def.function.body)
         res += self.indent() + '}'
         return res
 
     def visit_conditional(self, conditional):
         res = 'if (' + conditional.condition.accept(self) + ') {\n'
-        self.indentation_level += 1
-        for expr in conditional.if_true or []:
-            res += self.indent() + self.get_command(expr)
-            res += '\n'
-        self.indentation_level -= 1
+        res += self.visit_block(conditional.if_true)
         if not conditional.if_false:
             res += self.indent() + '}'
             return res
         res += self.indent() + '} else {\n'
-        self.indentation_level += 1
-        for expr in conditional.if_false or []:
-            res += self.indent() + self.get_command(expr)
-            res += '\n'
-        self.indentation_level -= 1
+        res += self.visit_block(conditional.if_false)
         res += self.indent() + '}'
         return res
 
@@ -69,9 +62,8 @@ class PrettyPrint(ASTNodeVisitor):
         return 'read ' + read.name
 
     def visit_function_call(self, func_call):
-        accepted_args = [expr.accept(self) for expr in func_call.args]
         res = func_call.fun_expr.accept(self) + '('
-        res += ', '.join(accepted_args)
+        res += ', '.join([expr.accept(self) for expr in func_call.args])
         res += ')'
         return res
 
