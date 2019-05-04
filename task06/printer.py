@@ -3,7 +3,7 @@ from model import *
 
 
 def pretty_print(program):
-    print(PrettyPrint().get_command(program))
+    print(PrettyPrint().get_statement(program))
 
 
 class PrettyPrint(ASTNodeVisitor):
@@ -15,19 +15,20 @@ class PrettyPrint(ASTNodeVisitor):
     def indent(self):
         return (PrettyPrint.INDENT * self.indentation_level) * ' '
 
-    def get_command(self, program):
-        ret = program.accept(self)
-        if not ret.endswith('}'):
-            ret += ';'
-        return ret
+    def get_statement(self, program):
+        res = program.accept(self)
+        if not res.endswith('}'):
+            res += ';'
+        return res
 
     def visit_block(self, args):
-        res = ''
+        res = '{\n'
         self.indentation_level += 1
-        for expr in args:
-            res += self.indent() + self.get_command(expr)
+        for expr in args or []:
+            res += self.indent() + self.get_statement(expr)
             res += '\n'
         self.indentation_level -= 1
+        res += self.indent() + '}'
         return res
 
     def visit_number(self, number):
@@ -39,20 +40,17 @@ class PrettyPrint(ASTNodeVisitor):
     def visit_function_definition(self, func_def):
         res = 'def ' + func_def.name + '('
         res += ', '.join(func_def.function.args)
-        res += ') {\n'
+        res += ') '
         res += self.visit_block(func_def.function.body)
-        res += self.indent() + '}'
         return res
 
     def visit_conditional(self, conditional):
-        res = 'if (' + conditional.condition.accept(self) + ') {\n'
+        res = 'if (' + conditional.condition.accept(self) + ') '
         res += self.visit_block(conditional.if_true)
         if not conditional.if_false:
-            res += self.indent() + '}'
             return res
-        res += self.indent() + '} else {\n'
+        res += ' else '
         res += self.visit_block(conditional.if_false)
-        res += self.indent() + '}'
         return res
 
     def visit_print(self, print):
@@ -63,7 +61,7 @@ class PrettyPrint(ASTNodeVisitor):
 
     def visit_function_call(self, func_call):
         res = func_call.fun_expr.accept(self) + '('
-        res += ', '.join([expr.accept(self) for expr in func_call.args])
+        res += ', '.join(expr.accept(self) for expr in func_call.args)
         res += ')'
         return res
 

@@ -53,21 +53,20 @@ class ConstantFolder(ASTNodeVisitor):
         op = bin_op.op
         if isinstance(lhs, Number) and isinstance(rhs, Number):
             return BinaryOperation(lhs, op, rhs).evaluate(Scope())
-        if ((isinstance(lhs, Number) and lhs == Number(0) and op == '*' and
+        if ((op == '*' and isinstance(lhs, Number) and lhs == Number(0) and
                 isinstance(rhs, Reference)) or
-            (isinstance(rhs, Number) and rhs == Number(0) and op == '*' and
+            (op == '*' and isinstance(rhs, Number) and rhs == Number(0) and
                 isinstance(lhs, Reference))):
             return Number(0)
-        if isinstance(lhs, Reference) and \
-           isinstance(rhs, Reference) and op == '-':
-            if lhs.name == rhs.name:
+        if (op == '-' and
+            isinstance(lhs, Reference) and isinstance(rhs, Reference) and
+                lhs.name == rhs.name):
                 return Number(0)
         return BinaryOperation(lhs, op, rhs)
 
     def visit_unary_operation(self, un_op):
         expr = un_op.expr.accept(self)
         op = un_op.op
-        ret = UnaryOperation(op, expr)
         if isinstance(expr, Number):
-            ret = ret.evaluate(Scope())
-        return ret
+            return UnaryOperation(op, expr).evaluate(Scope())
+        return UnaryOperation(op, expr)

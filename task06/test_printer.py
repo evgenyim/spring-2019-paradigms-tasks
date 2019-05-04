@@ -5,55 +5,65 @@ import textwrap
 
 
 def test_conditional():
-    check = Conditional(Number(42), [], []).accept(PrettyPrint())
-    assert check == 'if (42) {\n}'
+    formatted = Conditional(Number(42), None, []).accept(PrettyPrint())
+    assert formatted == 'if (42) {\n}'
+
+
+def test_conditional_2():
+    formatted = Conditional(Number(42), [Print(Number(3))], [Print(Number(4))]).accept(PrettyPrint())
+    assert formatted == textwrap.dedent('''\
+        if (42) {
+            print 3;
+        } else {
+            print 4;
+        }''')
 
 
 def test_function_definition():
-    check = PrettyPrint().visit_function_definition(
+    formatted = PrettyPrint().visit_function_definition(
         FunctionDefinition('foo', Function([], []))
     )
-    assert check == 'def foo() {\n}'
+    assert formatted == 'def foo() {\n}'
 
 
 def test_print():
-    check = PrettyPrint().visit_print(Print(Number(42)))
-    assert check == 'print 42'
+    formatted = PrettyPrint().visit_print(Print(Number(42)))
+    assert formatted == 'print 42'
 
 
 def test_read():
-    check = PrettyPrint().visit_read(Read('x'))
-    assert check == 'read x'
+    formatted = PrettyPrint().visit_read(Read('x'))
+    assert formatted == 'read x'
 
 
 def test_number():
-    check = PrettyPrint().visit_number(Number(10))
-    assert check == '10'
+    formatted = PrettyPrint().visit_number(Number(10))
+    assert formatted == '10'
 
 
 def test_reference():
-    check = PrettyPrint().visit_reference(Reference('x'))
-    assert check == 'x'
+    formatted = PrettyPrint().visit_reference(Reference('x'))
+    assert formatted == 'x'
 
 
 def test_bin_operation():
     add = BinaryOperation(Number(2), '+', Number(3))
     mul = BinaryOperation(Number(1), '*', add)
-    check = PrettyPrint().visit_binary_operation(mul)
-    assert check == '(1) * ((2) + (3))'
+    formatted = PrettyPrint().visit_binary_operation(mul)
+    assert formatted == '(1) * ((2) + (3))'
 
 
 def test_un_operation():
-    check = PrettyPrint().visit_unary_operation(
+    formatted = PrettyPrint().visit_unary_operation(
         UnaryOperation('-', Number(42))
     )
-    assert check == '-(42)'
+    assert formatted == '-(42)'
 
 
 def test_function_call():
-    check = PrettyPrint().visit_function_call(FunctionCall(
+    formatted = PrettyPrint().visit_function_call(FunctionCall(
         Reference('foo'), [Number(1), Number(2), Number(3)]))
-    assert check == 'foo(1, 2, 3)'
+    assert formatted == 'foo(1, 2, 3)'
 
 
 def test_all(capsys):

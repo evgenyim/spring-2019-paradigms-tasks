@@ -5,14 +5,12 @@ from printer import pretty_print
 
 
 def test_num_num():
-    actual = ConstantFolder().visit(
+    assert ConstantFolder().visit(
         BinaryOperation(Number(19), '-', Number(7))
-    )
-    assert actual == Number(12)
-    actual = ConstantFolder().visit(
+    ) == Number(12)
+    assert ConstantFolder().visit(
         BinaryOperation(Number(11), '*', Number(9))
-    )
-    assert actual == Number(99)
+    ) == Number(99)
 
 
 def test_zero_mul_ref():
@@ -65,5 +63,5 @@ def test_all():
     assert actual == Number(13)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pytest.main()
