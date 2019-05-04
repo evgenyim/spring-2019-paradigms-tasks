@@ -10,7 +10,8 @@ def test_conditional():
 
 
 def test_conditional_2():
-    formatted = Conditional(Number(42), [Print(Number(3))], [Print(Number(4))]).accept(PrettyPrint())
+    formatted = Conditional(Number(42), [Print(Number(3))],
+                            [Print(Number(4))]).accept(PrettyPrint())
     assert formatted == textwrap.dedent('''\
         if (42) {
             print 3;
