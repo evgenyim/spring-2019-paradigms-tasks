@@ -61,7 +61,7 @@ class ConstantFolder(ASTNodeVisitor):
         if (op == '-' and
             isinstance(lhs, Reference) and isinstance(rhs, Reference) and
                 lhs.name == rhs.name):
-                return Number(0)
+            return Number(0)
         return BinaryOperation(lhs, op, rhs)
 
     def visit_unary_operation(self, un_op):
