@@ -35,13 +35,13 @@ getHealth (_, _, myHealth) = myHealth
 -- состояние робота
 
 setName :: Name -> Robot -> Robot
-setName name (_, curAttack, curHealth) = (name, curAttack, curHealth)
+setName name (_, curAttack, curHealth) = robot name curAttack curHealth
 
 setAttack :: Attack -> Robot -> Robot
-setAttack attack (curName, _, curHealth) = (curName, attack, curHealth)
+setAttack attack (curName, _, curHealth) = robot curName attack curHealth
 
 setHealth :: Health -> Robot -> Robot
-setHealth health (curName, curAttack, _) = (curName, curAttack, health)
+setHealth health (curName, curAttack, _) = robot curName curAttack health
 
 -- Шаг 2.
 -- Напишите функцию, которая ведет себя как __str__
@@ -65,7 +65,7 @@ damage victim amount = let
 -- Вам понадобится вспомогательная функция isAlive, которая бы проверяла, жив робот или не очень
 -- Робот считается живым, если его уровень здоровья строго больше нуля.
 isAlive :: Robot -> Bool
-isAlive (_, _, health) = health > 0
+isAlive = (>0) . getHealth
 
 -- Затем, используя функцию damage, напишите функцию, которая моделирует один раунд схватки между
 -- двумя роботами
@@ -112,4 +112,4 @@ neueRobotAttak = fight neueRobot
 -- Наконец, используя filter определите, кто из роботов, которых вы положили в список roboter,
 -- выживет, если neueRobot сразится с ним в одном раунде.
 survivors :: [Robot]
-survivors = filter (isAlive.neueRobotAttak) roboter
+survivors = filter (isAlive . neueRobotAttak) roboter

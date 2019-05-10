@@ -13,6 +13,10 @@ testsRobots = let
     in testGroup "Unit tests for Robots task"
         [ testCase "Test for getName" $
             getName walter @?= "Walter"
+        , testCase "Test for getAttack" $
+            getAttack marvin @?= 20
+        , testCase "Test for getHealth" $
+            getHealth marvin @?= 60
         , testCase "Test for printRobot" $
             printRobot walter @?= "Walter, attack: 50, health: 50"
         , testCase "Test for setName" $
@@ -31,6 +35,8 @@ testsRobots = let
             fight walter marvin @?= ("Marvin", 20, 10)
         , testCase "Test for threeRoundFight" $
             threeRoundFight marvin walter @?= ("Marvin", 20, 10)
+        , testCase "Test for neueRobotAttak" $
+            neueRobotAttak marvin @?= ("Marvin", 20, -440)
         , testCase "Test for survivors" $
             survivors @?= [("Twins", 200, 1200),("Zeus", 300, 700)]
         ]
