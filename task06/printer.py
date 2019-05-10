@@ -35,7 +35,7 @@ class PrettyPrint(ASTNodeVisitor):
         return str(number.value)
 
     def visit_function(self, function):
-        raise TypeError("PrettyPrint shouldn't visit Function")
+        raise TypeError('PrettyPrint shouldn\'t visit Function')
 
     def visit_function_definition(self, func_def):
         res = 'def ' + func_def.name + '('

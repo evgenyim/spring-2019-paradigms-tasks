@@ -4,15 +4,16 @@ from printer import *
 import textwrap
 
 
-def test_conditional():
-    formatted = Conditional(Number(42), None, []).accept(PrettyPrint())
-    assert formatted == 'if (42) {\n}'
+def test_conditional_if_is_true_list_is_none():
+    assert Conditional(
+        Number(42), None, []
+    ).accept(PrettyPrint()) == 'if (42) {\n}'
 
 
-def test_conditional_2():
-    formatted = Conditional(Number(42), [Print(Number(3))],
-                            [Print(Number(4))]).accept(PrettyPrint())
-    assert formatted == textwrap.dedent('''\
+def test_conditional_if_if_true_list_is_not_none():
+    assert Conditional(
+        Number(42), [Print(Number(3))], [Print(Number(4))]
+    ).accept(PrettyPrint()) == textwrap.dedent('''\
         if (42) {
             print 3;
         } else {
@@ -21,50 +22,46 @@ def test_conditional_2():
 
 
 def test_function_definition():
-    formatted = PrettyPrint().visit_function_definition(
-        FunctionDefinition('foo', Function([], []))
-    )
-    assert formatted == 'def foo() {\n}'
+    assert FunctionDefinition(
+        'foo', Function([], [])
+    ).accept(PrettyPrint()) == 'def foo() {\n}'
 
 
 def test_print():
-    formatted = PrettyPrint().visit_print(Print(Number(42)))
-    assert formatted == 'print 42'
+    assert Print(
+        Number(42)
+    ).accept(PrettyPrint()) == 'print 42'
 
 
 def test_read():
-    formatted = PrettyPrint().visit_read(Read('x'))
-    assert formatted == 'read x'
+    assert Read('x').accept(PrettyPrint()) == 'read x'
 
 
 def test_number():
-    formatted = PrettyPrint().visit_number(Number(10))
-    assert formatted == '10'
+    assert Number(10).accept(PrettyPrint()) == '10'
 
 
 def test_reference():
-    formatted = PrettyPrint().visit_reference(Reference('x'))
-    assert formatted == 'x'
+    assert Reference('x').accept(PrettyPrint()) == 'x'
 
 
 def test_bin_operation():
     add = BinaryOperation(Number(2), '+', Number(3))
-    mul = BinaryOperation(Number(1), '*', add)
-    formatted = PrettyPrint().visit_binary_operation(mul)
-    assert formatted == '(1) * ((2) + (3))'
+    assert BinaryOperation(
+        Number(1), '*', add
+    ).accept(PrettyPrint()) == '(1) * ((2) + (3))'
 
 
 def test_un_operation():
-    formatted = PrettyPrint().visit_unary_operation(
-        UnaryOperation('-', Number(42))
-    )
-    assert formatted == '-(42)'
+    assert UnaryOperation(
+        '-', Number(42)
+    ).accept(PrettyPrint()) == '-(42)'
 
 
 def test_function_call():
-    formatted = PrettyPrint().visit_function_call(FunctionCall(
-        Reference('foo'), [Number(1), Number(2), Number(3)]))
-    assert formatted == 'foo(1, 2, 3)'
+    assert FunctionCall(
+        Reference('foo'), [Number(1), Number(2), Number(3)]
+    ).accept(PrettyPrint()) == 'foo(1, 2, 3)'
 
 
 def test_all(capsys):
