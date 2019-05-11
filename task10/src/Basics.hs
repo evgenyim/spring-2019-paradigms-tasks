@@ -54,6 +54,6 @@ concat' (x:xs) ys = x : concat' xs ys
 quickSort' :: Ord a => [a] -> [a]
 quickSort' []     = []
 quickSort' (x:xs) = let
-    less_equal = quickSort' (filter' (<=x) xs)
+    lessEqual = quickSort' (filter' (<=x) xs)
     greater = quickSort' (filter' (>x) xs)
-  in concat' less_equal (x : greater)
+  in concat' lessEqual (x : greater)

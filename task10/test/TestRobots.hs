@@ -12,7 +12,7 @@ testsRobots = let
         marvin = robot "Marvin" 20 60
     in testGroup "Unit tests for Robots task"
         [ testCase "Test for getName" $
-            getName walter @?= "Walter"
+            getName marvin @?= "Marvin"
         , testCase "Test for getAttack" $
             getAttack marvin @?= 20
         , testCase "Test for getHealth" $

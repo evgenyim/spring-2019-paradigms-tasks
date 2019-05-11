@@ -35,13 +35,13 @@ getHealth (_, _, myHealth) = myHealth
 -- состояние робота
 
 setName :: Name -> Robot -> Robot
-setName name (_, curAttack, curHealth) = robot name curAttack curHealth
+setName newName (_, curAttack, curHealth) = robot newName curAttack curHealth
 
 setAttack :: Attack -> Robot -> Robot
-setAttack attack (curName, _, curHealth) = robot curName attack curHealth
+setAttack newAttack (curName, _, curHealth) = robot curName newAttack curHealth
 
 setHealth :: Health -> Robot -> Robot
-setHealth health (curName, curAttack, _) = robot curName curAttack health
+setHealth newHealth (curName, curAttack, _) = robot curName curAttack newHealth
 
 -- Шаг 2.
 -- Напишите функцию, которая ведет себя как __str__
@@ -57,9 +57,9 @@ printRobot (name, attack, health) = name ++ ", attack: " ++ show attack ++ ", he
 -- Напишем функцию damage которая причиняет роботу урон
 damage :: Robot -> Int -> Robot
 damage victim amount = let
-    health = getHealth victim
-    newHealth = health - amount
-  in setHealth newHealth victim
+                         health = getHealth victim
+                         newHealth = health - amount
+                       in setHealth newHealth victim
 
 -- Шаг 3.
 -- Вам понадобится вспомогательная функция isAlive, которая бы проверяла, жив робот или не очень
@@ -76,8 +76,9 @@ isAlive = (>0) . getHealth
 -- Обратите внимание, что неживой робот не может атаковать. В этом случае нужно просто
 -- вернуть второго робота, как будто ничего и не было
 fight :: Robot -> Robot -> Robot
-fight attacker defender | isAlive attacker = damage defender (getAttack attacker)
-                        | otherwise = defender
+fight attacker defender
+                        | isAlive attacker = damage defender (getAttack attacker)
+                        | otherwise        = defender
 
 -- Наконец, напишите функцию, которая бы моделировала три раунда схватки между
 -- двумя роботами и возвращала бы победителя. Схватка происходит следующим образом:
