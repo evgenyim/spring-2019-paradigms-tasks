@@ -30,7 +30,7 @@ testsRobots = let
         , testCase "Test for isAlive True" $
             isAlive walter @?= True
         , testCase "Test for isAlive False" $
-            isAlive (damage walter 50) @?= False
+            isAlive ("Test", 100, -10) @?= False
         , testCase "Test for fight" $
             fight walter marvin @?= ("Marvin", 20, 10)
         , testCase "Test for threeRoundFight" $

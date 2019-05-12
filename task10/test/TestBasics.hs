@@ -24,7 +24,7 @@ testsBasics = testGroup "Unit tests for Basics tasks"
         take' 1 [1,2,3] @?= [1]
 
     , testCase "take' takes 6 element from infinity list" $
-        take'  6 [1..] @?= [1,2,3,4,5,6]
+        take' 6 [1..] @?= [1,2,3,4,5,6]
 
     , testCase "drop' drops 1 element from 3-element list" $
         drop' 1 [1,2,3] @?= [2,3]
@@ -39,7 +39,7 @@ testsBasics = testGroup "Unit tests for Basics tasks"
         take' 10 (filter' even [1..]) @?= take 10 ([2,4..])
 
     , testCase "foldl'' can be used for finding sum of elements" $
-        foldl'' (+) 0 [1,2,3] @?= 6
+        foldl'' (\x y -> (x + y) / 2) 2 [3,4] @?= (((2 + 3) / 2) + 4) / 2
 
     , testCase "foldl'' can be used with nonassociative function" $
         foldl'' (^) 2 [1,2,3] @?= 64
@@ -51,7 +51,7 @@ testsBasics = testGroup "Unit tests for Basics tasks"
         take' 6 (concat' [1..] [1,2,3]) @?= take' 6 ([1..])
 
     , testCase "concat' works when second list is infinite as expected" $
-        take' 6 (concat' [1,2,3] [1..]) @?= [1,2,3,1,2,3]
+        take' 6 (concat' [1,2,3] [4..]) @?= take' 6 [1..]
 
     , testCase "quickSort actualy sorts the list" $
         quickSort' [5,2,3,4,1] @?= [1..5]
