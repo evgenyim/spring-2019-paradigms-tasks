@@ -39,10 +39,10 @@ testsBasics = testGroup "Unit tests for Basics tasks"
         take' 10 (filter' even [1..]) @?= take 10 ([2,4..])
 
     , testCase "foldl'' can be used for finding sum of elements" $
-        foldl'' (\x y -> (x + y) / 2) 2 [3,4] @?= (((2 + 3) / 2) + 4) / 2
+        foldl'' (+) 0 [1,2,3] @?= 6
 
     , testCase "foldl'' can be used with nonassociative function" $
-        foldl'' (^) 2 [1,2,3] @?= 64
+        foldl'' (\x y -> (x + y) / 2) 2 [3,4] @?= (((2 + 3) / 2) + 4) / 2
 
     , testCase "concat' works on finite lists as expected" $
         concat' [1,2,3] [4,5,6] @?= [1..6]
