@@ -59,7 +59,8 @@ damage :: Robot -> Int -> Robot
 damage victim amount = let
     health = getHealth victim
     newHealth = health - amount
-                       in setHealth newHealth victim
+  in 
+    setHealth newHealth victim
 
 -- Шаг 3.
 -- Вам понадобится вспомогательная функция isAlive, которая бы проверяла, жив робот или не очень
