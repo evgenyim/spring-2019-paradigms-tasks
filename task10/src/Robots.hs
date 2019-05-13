@@ -56,11 +56,10 @@ printRobot (name, attack, health) = name ++ ", attack: " ++ show attack ++ ", he
 -- Давайте теперь научим роботов драться друг с другом
 -- Напишем функцию damage которая причиняет роботу урон
 damage :: Robot -> Int -> Robot
-damage victim amount = let
-    health = getHealth victim
-    newHealth = health - amount
-  in 
-    setHealth newHealth victim
+damage victim amount = 
+  let health    = getHealth victim
+      newHealth = health - amount
+  in setHealth newHealth victim
 
 -- Шаг 3.
 -- Вам понадобится вспомогательная функция isAlive, которая бы проверяла, жив робот или не очень
