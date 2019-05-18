@@ -62,29 +62,42 @@ mapTests name (_ :: Proxy m) =
                 in Map.null map @?= True,
 
             testCase "test adjust" $
-               let map = adjust ("new " ++) 5 (fromList [(5,"a"), (3,"b")] :: m Int String)
-               in Map.lookup 5 map @?= Just "new a",
+                let map = adjust ("new " ++) 5 (fromList [(5,"a"), (3,"b")] :: m Int String)
+                in Map.lookup 5 map @?= Just "new a",
 
             testCase "test adjustWithKey" $
-               let f key x = (show key) ++ ":new " ++ x in
-               let map     = adjustWithKey f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
-               in Map.lookup 5 map @?= Just "5:new a"
+                let f key x = (show key) ++ ":new " ++ x in
+                let map     = adjustWithKey f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
+                in Map.lookup 5 map @?= Just "5:new a"
         ],
         testGroup "Test update" [
             testCase "test update" $
                 let f x = if x == "a" then Just "new a" else Nothing in
-                let map = update f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String in
-                Map.lookup 5 map @?= Just "new a",
+                let map = update f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
+                in Map.lookup 5 map @?= Just "new a",
 
             testCase "test update single left" $
                 let f x = if x == "a" then Just "new a" else Nothing in
-                let map = update f 3 (fromList [(5,"a"), (3,"b")]) :: m Int String in
-                Map.lookup 5 map @?= Just "a",
+                let map = update f 3 (fromList [(5,"a"), (3,"b")]) :: m Int String
+                in Map.lookup 5 map @?= Just "a",
 
             testCase "test updateWithKey" $
                 let f k x = if x == "a" then Just ((show k) ++ ":new a") else Nothing in
                 let map   = updateWithKey f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
                 in Map.lookup 5 map @?= Just "5:new a"
+        ],
+        testGroup "Test alter/lookup/size" [
+            testCase "test alter" $
+                let tr = alter (fmap ("c" ++)) 6 (singleton 6 "a") :: m Int String
+                in Map.lookup 6 tr @?= Just "ca",
+
+            testCase "test lookup" $
+                let tr = singleton 6 "a" :: m Int String
+                in Map.lookup 6 tr @?= Just "a",
+
+            testCase "test size" $
+                let tr = fromList [(2, "a"), (1, "b"), (3, "c"), (1, "x")] :: m Int String
+                in size tr @?= 3
         ],
         testGroup "Test member" [
             testCase "test member true" $
