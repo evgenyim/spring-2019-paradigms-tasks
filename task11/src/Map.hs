@@ -32,7 +32,7 @@ class Map t where
     singleton :: k -> a -> t k a
 
     fromList :: Ord k => [(k, a)] -> t k a
-    fromList = foldl (\x (k, a) -> insert k a x) empty
+    fromList = foldl (flip $ uncurry insert) empty
 
     toAscList :: t k a -> [(k, a)]
 
@@ -46,16 +46,16 @@ class Map t where
     insertWithKey f k = insertWith (f k) k
 
     delete :: Ord k => k -> t k a -> t k a
-    delete = alter (const Nothing)
+    delete = alter $ const Nothing
 
     adjust :: Ord k => (a -> a) -> k -> t k a -> t k a
-    adjust f = alter (fmap f)
+    adjust = alter . fmap
 
     adjustWithKey :: Ord k => (k -> a -> a) -> k -> t k a -> t k a
     adjustWithKey f k = adjust (f k) k
 
     update :: Ord k => (a -> Maybe a) -> k -> t k a -> t k a
-    update f = alter (maybe Nothing f)
+    update f = alter $ maybe Nothing f
 
     updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> t k a -> t k a
     updateWithKey f k = update (f k) k
@@ -71,6 +71,6 @@ class Map t where
     notMember k = not . (member k)
 
     null :: t k a -> Bool
-    null t = size t == 0
+    null = (==0) . size
 
     size :: t k a -> Int
