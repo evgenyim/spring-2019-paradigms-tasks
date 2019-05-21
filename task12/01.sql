@@ -3,4 +3,4 @@
 -- площадью порядок лексикографический. (0,25 баллов)
 SELECT Name FROM Country
 ORDER BY SurfaceArea DESC, Name
-LIMIT 5
+LIMIT 5;
