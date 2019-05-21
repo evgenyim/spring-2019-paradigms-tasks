@@ -32,95 +32,95 @@ mapTests name (_ :: Proxy m) =
                 let tr = fromList [(2, "a"), (1, "b"), (3, "c"), (1, "x")] :: m Int String in
                 toAscList tr @?= [(1, "x"), (2, "a"), (3, "c")]
         ],
-        testGroup "Test insert" [
-            testCase "test insert in empty map" $
+        testGroup "insert*" [
+            testCase "insert in empty map" $
                 let map = insert 1 "x" (empty :: m Int String)
                 in Map.lookup 1 map @?= Just "x",
 
-            testCase "test insert in not empty map" $
+            testCase "insert in not empty map" $
                 let tr = fromList [(2, "a"), (3, "c"), (1, "x")] :: m Int String in
                 let map = insert 4 "y" tr
                 in Map.lookup 4 map @?= Just "y",
 
-            testCase "test insertWith in not empty map" $
+            testCase "insertWith in not empty map" $
                 let tr = fromList [(2, "a"), (3, "c"), (1, "x")] :: m Int String in
                 let map = insertWith (++) 2 "x" tr
                 in Map.lookup 2 map @?= Just "xa",
 
-            testCase "test insertWithKey" $
-                let f key new old = (show key) ++ ":" ++ new ++ "|" ++ old in
+            testCase "insertWithKey" $
+                let f key new old = show key ++ ":" ++ new ++ "|" ++ old in
                 let map           = insertWithKey f 5 "xxx" (fromList [(5,"a"), (3,"b")] :: m Int String)
                 in Map.lookup 5 map @?= Just "5:xxx|a"
         ],
-        testGroup "Test delete / adjust" [
-            testCase "test delete" $
+        testGroup "delete" [
+            testCase "from non-empty map" $
                 let map = delete 3 (fromList [(2, "a"), (1, "b"), (3, "c"), (1, "x")] :: m Int String)
                 in Map.lookup 3 map @?= Nothing,
 
-            testCase "test delete from empty map" $
+            testCase "from empty map" $
                 let map = delete 5 (empty :: m Int String)
-                in Map.null map @?= True,
-
-            testCase "test adjust" $
+                in Map.null map @?= True
+        ],
+        testGroup "adjust*" [
+            testCase "adjust" $
                 let map = adjust ("new " ++) 5 (fromList [(5,"a"), (3,"b")] :: m Int String)
                 in Map.lookup 5 map @?= Just "new a",
 
-            testCase "test adjustWithKey" $
+            testCase "adjustWithKey" $
                 let f key x = (show key) ++ ":new " ++ x in
                 let map     = adjustWithKey f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
                 in Map.lookup 5 map @?= Just "5:new a"
         ],
-        testGroup "Test update" [
-            testCase "test update" $
+        testGroup "update*" [
+            testCase "update" $
                 let f x = if x == "a" then Just "new a" else Nothing in
                 let map = update f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
                 in Map.lookup 5 map @?= Just "new a",
 
-            testCase "test update single left" $
+            testCase "update single left" $
                 let f x = if x == "a" then Just "new a" else Nothing in
                 let map = update f 3 (fromList [(5,"a"), (3,"b")]) :: m Int String
                 in Map.lookup 5 map @?= Just "a",
 
-            testCase "test updateWithKey" $
+            testCase "updateWithKey" $
                 let f k x = if x == "a" then Just ((show k) ++ ":new a") else Nothing in
                 let map   = updateWithKey f 5 (fromList [(5,"a"), (3,"b")]) :: m Int String
                 in Map.lookup 5 map @?= Just "5:new a"
         ],
-        testGroup "Test alter/lookup/size" [
-            testCase "test alter" $
-                let tr = alter (fmap ("c" ++)) 6 (singleton 6 "a") :: m Int String
-                in Map.lookup 6 tr @?= Just "ca",
+        testCase "alter" $
+            let tr = alter (fmap ("c" ++)) 6 (singleton 6 "a") :: m Int String
+            in Map.lookup 6 tr @?= Just "ca",
 
-            testCase "test lookup" $
-                let tr = singleton 6 "a" :: m Int String
-                in Map.lookup 6 tr @?= Just "a",
+        testCase "lookup" $
+            let tr = singleton 6 "a" :: m Int String
+            in Map.lookup 6 tr @?= Just "a",
 
-            testCase "test size" $
-                let tr = fromList [(2, "a"), (1, "b"), (3, "c"), (1, "x")] :: m Int String
-                in size tr @?= 3
-        ],
-        testGroup "Test member" [
-            testCase "test member true" $
+        testCase "size" $
+            let tr = fromList [(2, "a"), (1, "b"), (3, "c"), (1, "x")] :: m Int String
+            in size tr @?= 3,
+
+        testGroup "member / notMember" [
+            testCase "true" $
                 let map = (fromList [(5,"a"), (3,"b")]) :: m Int String in
                 member 5 map @?= True,
 
-            testCase "test member false" $
+            testCase "false" $
                 let map = (fromList [(5,"a"), (3,"b")]) :: m Int String in
                 member 7 map @?= False,
 
-            testCase "test notMember" $
+            testCase "notMember true" $
                 let map = (fromList [(5,"a"), (3,"b")]) :: m Int String in
                 notMember 7 map @?= True,
 
-            testCase "test notMember" $
+            testCase "notMember false" $
                 let map = (fromList [(5,"a"), (3,"b")]) :: m Int String in
                 notMember 5 map @?= False
         ],
-        testGroup "Test null" [
-            testCase "test null true" $
+        testGroup "null" [
+            testCase "true" $
                 Map.null (empty :: m Int String) @?= True,
 
-            testCase "test null false" $
+            testCase "false" $
                 Map.null (fromList [(5,"a"), (3,"b")] :: m Int String) @?= False
         ]
     ]
